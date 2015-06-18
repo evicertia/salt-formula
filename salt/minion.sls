@@ -1,4 +1,8 @@
 {% from "salt/map.jinja" import salt_settings with context %}
+{% set version = salt_settings.version|default(None) %}
+{% set version = salt_settings.minion|default({}).version|default(version) %}
+
+## {{ salt_settings.version }}
 
 {% if salt_settings.install_packages and grains.os == 'MacOS' and salt_settings.salt_minion_pkg_source != '' and salt_settings.version != '' %}
 {# only download IF we know where to get the pkg from and if we know what version to check the current install (if installed) against #}
@@ -38,6 +42,9 @@ salt-minion:
     - version: {{ salt_settings.version }}
   {%- endif %}
   {%- endif %}
+{% endif %}
+{% if version != None %}
+    - version: {{ version }}
 {% endif %}
   file.recurse:
     - name: {{ salt_settings.config_path }}/minion.d
@@ -123,6 +130,17 @@ salt-minion-beacon-inotify:
 remove-default-minion-conf-file:
   file.absent:
     - name: {{ salt_settings.config_path }}/minion
+{% endif %}
+
+{% if grains['os_family'] in 'RedHat' %}
+{% if salt['pillar.get']('salt:copr-zeromq4', False) %}
+zeromq:
+  pkg.installed:
+    - require:
+      - pkgrepo: saltstack-zeromq4
+    - require_in:
+      - pkg: salt-minion
+{% endif %}
 {% endif %}
 
 # clean up old _defaults.conf file if they have it around
