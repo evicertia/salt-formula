@@ -1,9 +1,16 @@
 {% from "salt/map.jinja" import salt_settings with context %}
+{% set version = salt_settings.version|default(None) %}
+{% set version = salt_settings.minion|default({}).version|default(version) %}
+
+## {{ salt_settings.version }}
 
 salt-minion:
 {% if salt_settings.install_packages %}
   pkg.installed:
     - name: {{ salt_settings.salt_minion }}
+{% endif %}
+{% if version != None %}
+    - version: {{ version }}
 {% endif %}
   file.recurse:
     - name: {{ salt_settings.config_path }}/minion.d
@@ -22,6 +29,17 @@ salt-minion:
 {% endif %}
       - file: salt-minion
       - file: remove-old-minion-conf-file
+
+{% if grains['os_family'] in 'RedHat' %}
+{% if salt['pillar.get']('salt:copr-zeromq4', False) %}
+zeromq:
+  pkg.installed:
+    - require:
+      - pkgrepo: saltstack-zeromq4
+    - require_in:
+      - pkg: salt-minion
+{% endif %}
+{% endif %}
 
 # clean up old _defaults.conf file if they have it around
 remove-old-minion-conf-file:
