@@ -11,7 +11,7 @@
 {%- set value = salt['pillar.get']('salt_formulas:git_opts:{}:{}'.format(env, opt),
      salt['pillar.get']('salt_formulas:git_opts:default:{}'.format(opt),
        defaults[opt])) -%}
-{%- if value is mapping -%}
+{%- if value is not string -%}
 {{ value|yaml }}
 {%- else -%}
 {{ value }}
