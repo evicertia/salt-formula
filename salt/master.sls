@@ -30,7 +30,20 @@ remove-default-master-conf-file:
     - name: {{ salt_settings.config_path }}/master
 {% endif %}
 
+{% set files = salt.pillar.get('salt:master.d', {}) %}
+{% for file, data in files.iteritems() %}
+{{ salt_settings.config_path ~ '/master.d/' ~ file }}:
+  file.managed:
+    - source: salt://salt/files/included.conf
+    - template: jinja
+    - context:
+      data: {{ data|yaml }}
+    - require_in:
+      - file: salt-master
+{% endfor %}
+
 # clean up old _defaults.conf file if they have it around
 remove-old-master-conf-file:
   file.absent:
     - name: {{ salt_settings.config_path }}/master.d/_defaults.conf
+
