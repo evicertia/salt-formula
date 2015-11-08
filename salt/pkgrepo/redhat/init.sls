@@ -8,3 +8,11 @@ saltstack-pkgrepo:
     - gpgcheck: 1
     - gpgkey: {{ salt_settings.key_url }}
 
+#
+# Remove saltstack-zeromq4 COPR repo, as it is no longer required.
+#
+
+saltstack-zeromq4:
+  pkgrepo:
+    - absent
+
