@@ -7,3 +7,4 @@ saltstack-pkgrepo:
     - enabled: 1
     - gpgcheck: 1
     - gpgkey: {{ salt_settings.key_url }}
+
