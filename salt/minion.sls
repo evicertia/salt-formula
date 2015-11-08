@@ -133,14 +133,12 @@ remove-default-minion-conf-file:
 {% endif %}
 
 {% if grains['os_family'] in 'RedHat' %}
-{% if salt['pillar.get']('salt:copr-zeromq4', False) %}
 zeromq:
   pkg.installed:
     - require:
-      - pkgrepo: saltstack-zeromq4
+      - pkgrepo: saltstack-rhel
     - require_in:
       - pkg: salt-minion
-{% endif %}
 {% endif %}
 
 # clean up old _defaults.conf file if they have it around
