@@ -1,6 +1,7 @@
 {% from "salt/map.jinja" import salt_settings with context %}
+{% set settings = salt_settings.minion|default({}) %}
 {% set version = salt_settings.version|default(None) %}
-{% set version = salt_settings.minion|default({}).version|default(version) %}
+{% set version = settings.version|default(version) %}
 
 ## {{ salt_settings.version }}
 
