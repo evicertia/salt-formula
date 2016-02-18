@@ -137,7 +137,7 @@ remove-default-minion-conf-file:
 zeromq:
   pkg.installed:
     - require:
-      - pkgrepo: saltstack-rhel
+      - pkgrepo: saltstack-pkgrepo
     - require_in:
       - pkg: salt-minion
 {% endif %}
