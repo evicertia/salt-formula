@@ -16,3 +16,7 @@ saltstack-zeromq4:
   pkgrepo:
     - absent
 
+saltstack-rhel:
+  pkgrepo:
+    - absent
+
