@@ -20,3 +20,7 @@ saltstack-rhel:
   pkgrepo:
     - absent
 
+saltstack:
+  pkgrepo:
+    - absent
+
