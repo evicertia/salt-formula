@@ -3,7 +3,7 @@
 {% set version = salt_settings.version|default(None) %}
 {% set version = settings.version|default(version) %}
 
-## {{ salt_settings.version }}
+## {{ salt_settings.version|default(None) }}
 
 {% if salt_settings.install_packages and grains.os == 'MacOS' and salt_settings.salt_minion_pkg_source != '' and salt_settings.version != '' %}
 {# only download IF we know where to get the pkg from and if we know what version to check the current install (if installed) against #}
