@@ -11,7 +11,3 @@ saltstack-pkgrepo:
     # because we don't know if they are used.
     - order: 1
 
-# Remove default pkgrepo deployed by bootstrap script
-saltstack:
-  pkgrepo:
-    - absent
