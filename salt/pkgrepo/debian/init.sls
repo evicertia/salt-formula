@@ -10,3 +10,8 @@ saltstack-pkgrepo:
     # Order: 1 because we can't put a require_in on "pkg: salt-{master,minion}"
     # because we don't know if they are used.
     - order: 1
+
+# Remove default pkgrepo deployed by bootstrap script
+saltstack:
+  pkgrepo:
+    - absent
