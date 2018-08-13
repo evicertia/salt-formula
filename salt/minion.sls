@@ -66,7 +66,13 @@ salt-minion:
     {%- if grains['kernel'] == 'Windows' %}
     - name: 'salt-call.bat --local service.restart {{ salt_settings.minion_service }}'
     {%- else %}
-    - name: 'salt-call --local service.restart {{ salt_settings.minion_service }} --out-file /dev/null'
+    - name: >-
+        while true;
+          do sleep 5;
+          salt-call --local saltutil.running|grep fun: && continue;
+          salt-call --local service.restart "{{ salt_settings.minion_service }}" --out-file /dev/null;
+          break;
+        done
     {%- endif %}
     - bg: True
   {%- else %}
