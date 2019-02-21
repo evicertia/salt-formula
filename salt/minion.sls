@@ -5,7 +5,7 @@
 
 ## {{ salt_settings.version|default(None) }}
 
-{% if salt_settings.install_packages and grains.os == 'MacOS' and salt_settings.salt_minion_pkg_source != '' and salt_settings.version != '' %}
+{% if salt_settings.install_packages and grains.os == 'MacOS' and salt_settings.salt_minion_pkg_source != '' and version != none %}
 {# only download IF we know where to get the pkg from and if we know what version to check the current install (if installed) against #}
 {# e.g. don't download unless it appears as though we're about to try and upgrade the minion #}
 download-salt-minion:
@@ -21,27 +21,27 @@ download-salt-minion:
     - group: wheel
     - mode: 0644
     - unless:
-      - '/opt/salt/bin/salt-minion --version | grep {{ salt_settings.version }}'
+      - '/opt/salt/bin/salt-minion --version | grep {{ version }}'
     - require_in:
       - macpackage: salt-minion
 {% endif %}
 
 salt-minion:
 {% if salt_settings.install_packages %}
-  {%- if grains.os == 'MacOS' and salt_settings.salt_minion_pkg_source != '' and salt_settings.version != '' %}
+  {%- if grains.os == 'MacOS' and salt_settings.salt_minion_pkg_source != '' and version != none %}
   macpackage.installed:
     - name: '/tmp/salt.pkg'
     - target: /
     {# macpackage.installed behaves weirdly with version_check; version_check detects difference but fails to actually complete install. #}
     {# use force == True as workaround #}
     - force: True
-    - version_check: /opt/salt/bin/salt-minion --version=.*{{ salt_settings.version }}.*
+    - version_check: /opt/salt/bin/salt-minion --version=.*{{ version }}.*
   {%- else %}
   pkg.installed:
     - name: {{ salt_settings.salt_minion }}
-  {%- if salt_settings.version is defined %}
-    - version: {{ salt_settings.version }}
-  {%- endif %}
+{%   if grains['os_family'] in [ 'RedHat' ] %}
+    - fromrepo: base,updates,saltstack-pkgrepo
+{%-  endif %}
   {%- endif %}
 {% endif %}
 {% if version != None %}
@@ -139,9 +139,10 @@ remove-default-minion-conf-file:
     - name: {{ salt_settings.config_path }}/minion
 {% endif %}
 
-{% if grains['os_family'] in 'RedHat' %}
+{% if grains['os_family'] in [ 'RedHat' ] %}
 zeromq:
   pkg.installed:
+    - fromrepo: base,updates,saltstack-pkgrepo
     - require:
       - pkgrepo: saltstack-pkgrepo
     - require_in:

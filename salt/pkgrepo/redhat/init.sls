@@ -4,9 +4,11 @@ saltstack-pkgrepo:
   pkgrepo.managed:
     - humanname: SaltStack repo for RHEL/CentOS $releasever
     - baseurl: {{ salt_settings.pkgrepo }}
-    - enabled: 1
+    - enabled: 0
     - gpgcheck: 1
     - gpgkey: {{ salt_settings.key_url }}
+    - require_in:
+      - pkg: salt-minion
 
 #
 # Remove saltstack-zeromq4 COPR repo, as it is no longer required.
